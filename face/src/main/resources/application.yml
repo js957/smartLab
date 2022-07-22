@@ -19,9 +19,10 @@ spring:
     type:
       com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:13306/labor?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
+    url: jdbc:mysql://113.55.103.73:13306/labor?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
     username: root
-    password: ynu1213eng@!...
+    password: root123
+#    password: ynu1213eng@!...
 #    url: jdbc:mysql://192.168.31.134:3306/labor?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
 #    username: smartLab
 #    password: ynuLab1215@!...

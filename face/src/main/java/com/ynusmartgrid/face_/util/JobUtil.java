@@ -25,9 +25,11 @@ public class JobUtil {
      * 新建一个任务
      */
     public String addJob(JobRecord jobRecord, String cronExpression) throws Exception {
+        Date now = new Date();
+        Date OneYearLater = new Date(now.getYear() + 1, now.getMonth(), now.getDate());
 
-        Date start = Date.from(jobRecord.getStartTime().atZone(ZoneId.systemDefault()).toInstant());
-        Date end = Date.from(jobRecord.getEndTime().atZone(ZoneId.systemDefault()).toInstant());
+        Date start = jobRecord.getStartTime() == null ? now : Date.from(jobRecord.getStartTime().atZone(ZoneId.systemDefault()).toInstant());
+        Date end = jobRecord.getEndTime() == null ? OneYearLater : Date.from(jobRecord.getEndTime().atZone(ZoneId.systemDefault()).toInstant());
 
 
         if (StrUtil.isBlank(jobRecord.getCronExpression()) || !CronExpression.isValidExpression(jobRecord.getCronExpression())) {
@@ -70,6 +72,9 @@ public class JobUtil {
         //传递参数
         if (StrUtil.isNotBlank(jobRecord.getInvokeParam())) {
             trigger.getJobDataMap().put("invokeParam", jobRecord.getInvokeParam());
+        }
+        if(StrUtil.isNotBlank(jobRecord.getGroupId().toString())){
+            trigger.getJobDataMap().put("groupId", jobRecord.getGroupId());
         }
         scheduler.scheduleJob(jobDetail, trigger);
         // pauseJob(appQuartz.getJobName(),appQuartz.getJobGroup());

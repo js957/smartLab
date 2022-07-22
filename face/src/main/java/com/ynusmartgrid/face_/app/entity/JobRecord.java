@@ -13,6 +13,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 /**
  * <p>
  *
@@ -28,6 +31,14 @@ public class JobRecord implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public interface Add {
+
+    }
+
+    public interface Modify {
+
+    }
+
     /**
      * 任务主键
      */
@@ -37,11 +48,13 @@ public class JobRecord implements Serializable {
     /**
      * 任务名
      */
+    @NotEmpty(message = "job名不允许为空", groups = JobRecord.Add.class)
     private String jobName;
 
     /**
      * 任务组名
      */
+    @NotEmpty(message = "job组名不允许为空", groups = JobRecord.Add.class)
     private String jobGroup;
 
     /**
@@ -61,11 +74,13 @@ public class JobRecord implements Serializable {
     /**
      * 任务调用的类
      */
+    @NotEmpty(message = "调用的功能不允许为空", groups = JobRecord.Add.class)
     private String jobClassName;
 
     /**
      * corn表达式，表示任务执行的触发时间
      */
+    @NotEmpty(message = "指定任务运行的表达式不允许为空", groups = JobRecord.Add.class)
     private String cronExpression;
 
     /**
@@ -76,6 +91,7 @@ public class JobRecord implements Serializable {
     /**
      * 任务绑定的组，组中为此任务涉及的人员，若空表示所有人都参与此任务
      */
+    @NotEmpty(message = "任何定时功能必须与人员组绑定", groups = JobRecord.Add.class)
     private Long groupId;
 
     /**

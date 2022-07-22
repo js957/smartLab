@@ -60,4 +60,20 @@ public class StatisticRecode implements Serializable {
             gmtCreate=LocalDateTime.now();
         }
     }
+
+    public StatisticRecode(Long groupId, String groupName, String statisticInfoRecode, LocalDateTime gmtCreate, Integer recodeType) {
+        this.groupId = groupId;
+        this.groupName = groupName;
+        this.statisticInfoRecode = statisticInfoRecode;
+        this.gmtCreate = gmtCreate;
+        this.recodeType = recodeType;
+    }
+
+    public StatisticRecode(Long groupId, String groupName, String statisticInfoRecode, Integer recodeType) {
+        this.groupId = groupId;
+        this.groupName = groupName;
+        this.statisticInfoRecode = statisticInfoRecode;
+        this.recodeType = recodeType;
+        this.gmtCreate = LocalDateTime.now();
+    }
 }

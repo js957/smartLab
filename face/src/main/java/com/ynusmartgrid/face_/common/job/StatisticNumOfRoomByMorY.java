@@ -78,7 +78,7 @@ public class StatisticNumOfRoomByMorY implements Job{
             log.error("============定时任务获未能取到统计数据============");
             return;
         }
-        StatisticRecode result = new StatisticRecode(null,Long.parseLong(groupId),groupName,count,endDate,recodeType);
+        StatisticRecode result = new StatisticRecode(null,Long.parseLong(groupId),groupName,String.valueOf(count),endDate,recodeType);
         statisticRecodeServiceImpl.save(result);
         log.info(String.format("============插入时间跨度%c的数据============", timeSpan));
         log.info(String.format("存储数据为：%s", result.toString()));
