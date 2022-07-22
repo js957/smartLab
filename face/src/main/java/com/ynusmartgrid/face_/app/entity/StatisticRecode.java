@@ -40,7 +40,7 @@ public class StatisticRecode implements Serializable {
     /**
      * 统计记录数，比如说组为房间----记录为人数即为房间内人数
      */
-    private Integer statisticInfoRecode;
+    private String statisticInfoRecode;
 
     /**
      * 记录时间

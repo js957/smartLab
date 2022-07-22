@@ -45,7 +45,7 @@ public class MaxNumBerOfRoomList {
         }else{
             statisticRecodeList = statisticRecodeList.stream().map(map->newList.stream()
                 .filter(m-> Objects.equals(m.getGroupId(), map.getGroupId()))
-                .filter(m->m.getStatisticInfoRecode() > map.getStatisticInfoRecode())
+                .filter(m->Integer.parseInt(m.getStatisticInfoRecode()) > Integer.parseInt(map.getStatisticInfoRecode()))
                 .findFirst().map(m->{
                     map.setStatisticInfoRecode(m.getStatisticInfoRecode());
                     return map;
@@ -59,18 +59,18 @@ public class MaxNumBerOfRoomList {
 
     public static void main(String[] args) {
         List<StatisticRecode> numberOfRoomList = Arrays.asList(
-                new StatisticRecode(null,4L,"1217",2, LocalDateTime.now(),0),
-                new StatisticRecode(null,3L,"1215",8, LocalDateTime.now(),0),
-                new StatisticRecode(null,2L,"1213",7, LocalDateTime.now(),0)
+                new StatisticRecode(null,4L,"1217","2", LocalDateTime.now(),0),
+                new StatisticRecode(null,3L,"1215","8", LocalDateTime.now(),0),
+                new StatisticRecode(null,2L,"1213","7", LocalDateTime.now(),0)
         );
         List<StatisticRecode> newNumberOfRoomList = Arrays.asList(
-                new StatisticRecode(null,4L,"1217",3, LocalDateTime.now(),0),
-                new StatisticRecode(null,3L,"1215",8, LocalDateTime.now(),0),
-                new StatisticRecode(null,2L,"1213",2, LocalDateTime.now(),0)
+                new StatisticRecode(null,4L,"1217","3", LocalDateTime.now(),0),
+                new StatisticRecode(null,3L,"1215","8", LocalDateTime.now(),0),
+                new StatisticRecode(null,2L,"1213","2", LocalDateTime.now(),0)
         );
         numberOfRoomList = numberOfRoomList.stream().map(map->newNumberOfRoomList.stream()
                 .filter(m-> Objects.equals(m.getGroupId(), map.getGroupId()))
-                .filter(m->m.getStatisticInfoRecode() > map.getStatisticInfoRecode())
+                .filter(m->Integer.parseInt(m.getStatisticInfoRecode()) > Integer.parseInt(map.getStatisticInfoRecode()))
                 .findFirst().map(m->{
                     map.setStatisticInfoRecode(m.getStatisticInfoRecode());
                     return map;
