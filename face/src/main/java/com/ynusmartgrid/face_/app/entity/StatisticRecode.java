@@ -76,4 +76,5 @@ public class StatisticRecode implements Serializable {
         this.recodeType = recodeType;
         this.gmtCreate = LocalDateTime.now();
     }
+
 }

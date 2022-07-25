@@ -4,16 +4,14 @@ package com.ynusmartgrid.face_.app.controller;
 import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.sun.corba.se.spi.ior.ObjectKey;
 import com.ynusmartgrid.face_.app.entity.PersonNumOfRoom;
 import com.ynusmartgrid.face_.app.entity.StatisticRecode;
 import com.ynusmartgrid.face_.app.service.IStatisticRecodeService;
 import com.ynusmartgrid.face_.pojo.CommonObjReturn;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -92,5 +90,19 @@ public class StatisticRecodeController {
             staQuery.eq("recode_type", objMap.get("recodeType").toString());
         }
         return new CommonObjReturn(statisticRecodeServiceImpl.getOne(staQuery));
+    }
+
+    /**
+    *@Param:
+    *@Author: wjs
+    *@date: 13:58
+     * 导出统计数据
+     * 返回类型自己写
+    */
+    @GetMapping("/exportStatisticRecode/{recode}")
+    public void exportStatisticRecode(@PathVariable("recode") int recodeId){
+        StatisticRecode statisticRecode = statisticRecodeServiceImpl.getById(recodeId);
+        // statisticRecode 就是查到的数据
+
     }
 }
