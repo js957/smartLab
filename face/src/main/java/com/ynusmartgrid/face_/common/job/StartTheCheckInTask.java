@@ -58,7 +58,7 @@ public class StartTheCheckInTask implements Job {
                         .apply("UNIX_TIMESTAMP(gmt_create) >= UNIX_TIMESTAMP('" +  LocalDateTime.of(LocalDate.now(), LocalTime.MIN).format(df) + "')")
                         .apply("UNIX_TIMESTAMP(gmt_create) < UNIX_TIMESTAMP('" + LocalDateTime.now().format(df) + "')") // 当天
                         .groupBy("face_id", "face_name"));
-        statisticRecodeServiceImpl.save(new StatisticRecode(memberGroup.getGroupId(),memberGroup.getGroupName(), JSONUtil.toJsonStr(resultList),4));
+        statisticRecodeServiceImpl.save(new StatisticRecode(memberGroup.getGroupId(),memberGroup.getGroupName(), JSONUtil.toJsonStr(resultList), (int) jobDataMap.getLong("jobId")));
         log.info("=================定时签到触发，出勤签到表已生成===================");
     }
 }

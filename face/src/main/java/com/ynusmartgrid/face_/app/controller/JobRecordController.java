@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ynusmartgrid.face_.app.entity.Equipment;
 import com.ynusmartgrid.face_.app.entity.JobRecord;
+import com.ynusmartgrid.face_.app.entity.RecognizableThings;
 import com.ynusmartgrid.face_.app.service.impl.JobRecordServiceImpl;
 import com.ynusmartgrid.face_.constant.Constant;
 import com.ynusmartgrid.face_.pojo.CommonObjReturn;
@@ -14,6 +15,7 @@ import com.ynusmartgrid.face_.util.JobUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -83,8 +85,14 @@ public class JobRecordController {
      * 传入一个jobRecord对象，生成一个定时任务
     */
     @PostMapping("/addJob")
-    public CommonObjReturn addJob(@RequestBody JobRecord jobRecord) throws Exception {
-        jobRecordService.save(jobRecord);
+    public CommonObjReturn addJob(@Validated(value = {JobRecord.Add.class}) @RequestBody JobRecord jobRecord) throws Exception {
+        if(StrUtil.isBlank(jobRecord.getJobName())){
+            jobRecord.setJobName(jobRecord.getJobClassName() + "_" + jobRecordService.count());
+        }
+        if(StrUtil.isBlank(jobRecord.getJobGroup())){
+            jobRecord.setJobGroup(jobRecord.getJobClassName() + "_" + jobRecord.getGroupId());
+        }
+        jobRecordService.saveOrUpdate(jobRecord);
         String result = jobUtil.addJob(jobRecord, jobRecord.getCronExpression());
         if (StrUtil.isNotBlank(jobRecord.getCloseCronExpression())) {
             jobRecord.setJobName("Close-" + jobRecord.getJobName());

@@ -50,7 +50,7 @@ public class MemberGroupController {
         if(StrUtil.isNotBlank(objMap.get("id").toString())){
             MemberGroup memberGroup = memberGroupServiceImpl.getById(objMap.get("id").toString());
             List<FaceGroupBelong> faceGroupBelongList = faceGroupBelongServiceImpl
-                    .list(new QueryWrapper<FaceGroupBelong>().eq("group_id",objMap.get("groupId").toString()));
+                    .list(new QueryWrapper<FaceGroupBelong>().eq("group_id",objMap.get("id").toString()));
             memberGroup.setFaceGroupBelongList(faceGroupBelongList);
             return new CommonObjReturn(memberGroup);
         }

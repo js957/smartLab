@@ -78,6 +78,7 @@ public class StatisticRecodeController {
     *@Author: wjs
     *@date: 21:59
      * 获取统计数据
+     * groupId,groupName,startTime.endTime,recodeType(同jobId)
     */
     @PostMapping("/getStatisticRecode")
     public CommonObjReturn getStatisticRecode(@RequestBody HashMap<String, Object> objMap){
@@ -85,6 +86,9 @@ public class StatisticRecodeController {
         staQuery.orderByDesc("gmt_create");
         if(StrUtil.isNotBlank(objMap.get("groupId").toString())){
             staQuery.eq("group_id", objMap.get("groupId").toString());
+        }
+        if(StrUtil.isNotBlank(objMap.get("groupName").toString())){
+            staQuery.like("group_name",objMap.get("groupName").toString());
         }
         if(StrUtil.isNotBlank(objMap.get("recodeType").toString())){
             staQuery.eq("recode_type", objMap.get("recodeType").toString());

@@ -2,6 +2,7 @@ package com.ynusmartgrid.face_.app.entity;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;
+import java.sql.Date;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -115,10 +116,18 @@ public class FaceCaptureRecord implements Serializable {
      */
     private LocalDateTime gmtModified;
 
+    /**
+     * 记录的天
+     */
+    private Date day;
+
     public FaceCaptureRecord() {
         //默认当前时间
         if(this.gmtCreate == null){
-            gmtCreate=LocalDateTime.now();
+            this.gmtCreate=LocalDateTime.now();
+        }
+        if(this.day == null){
+            this.day = new Date(new java.util.Date().getTime());
         }
 
     }

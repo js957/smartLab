@@ -48,13 +48,11 @@ public class JobRecord implements Serializable {
     /**
      * 任务名
      */
-    @NotEmpty(message = "job名不允许为空", groups = JobRecord.Add.class)
     private String jobName;
 
     /**
      * 任务组名
      */
-    @NotEmpty(message = "job组名不允许为空", groups = JobRecord.Add.class)
     private String jobGroup;
 
     /**
@@ -91,7 +89,7 @@ public class JobRecord implements Serializable {
     /**
      * 任务绑定的组，组中为此任务涉及的人员，若空表示所有人都参与此任务
      */
-    @NotEmpty(message = "任何定时功能必须与人员组绑定", groups = JobRecord.Add.class)
+    @NotNull(message = "任何定时功能必须与人员组绑定", groups = JobRecord.Add.class)
     private Long groupId;
 
     /**

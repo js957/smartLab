@@ -1,0 +1,82 @@
+
+每十分钟统计每间房有多少人
+{
+    "jobName":"statisNumOfRoom",
+    "jobGroup":"Statistics",
+    "startTime":"2022-04-24 14:50:00",
+    "endTime":"2024-09-01 01:00:00",
+    "jobClassName":"StatisticNumsOfRoom",
+    "cronExpression":"0 */10 * * * ?",
+    "invokeParam":"{}",
+    "groupId":"1",
+    "closeCronExpression":""
+}
+
+每日凌晨23点添加出勤天数
+{
+    "jobName":"StatisticAttendanceByDay_1",
+    "jobGroup":"StatisticsNumAdd",
+    "startTime":"2022-04-24 14:50:00",
+    "endTime":"2024-09-01 01:00:00",
+    "jobClassName":"StatisticAttendanceByDay",
+    "cronExpression":"0 0 23 * * ?",
+    "invokeParam":"{}",
+    "groupId":"1",
+    "closeCronExpression":""
+}
+
+每日凌晨11点半添加出勤人数
+{
+    "jobName":"StatisticNumOfRoomByDay_1",
+    "jobGroup":"StatisticsNumAdd",
+    "startTime":"2022-04-24 14:50:00",
+    "endTime":"2024-09-01 01:00:00",
+    "jobClassName":"StatisticNumOfRoomByDay",
+    "cronExpression":"0 30 23 * * ?",
+    "invokeParam":"{
+        "groupIds":"10,11,12",
+        "sumUpGroupId":"1"
+
+    }",
+    "groupId":"1",
+    "closeCronExpression":""
+}
+
+每月统计出勤总数
+{
+    "jobName":"StatisticNumOfRoomByMorY_1",
+    "jobGroup":"StatisticsNumAdd",
+    "startTime":"2022-04-24 14:50:00",
+    "endTime":"2024-09-01 01:00:00",
+    "jobClassName":"StatisticNumOfRoomByMorY",
+    "cronExpression":"0 0 23 1 * ?",
+    "invokeParam":"{'groupId':'1','timeSpan':'M'}",
+    "groupId":"1",
+    "closeCronExpression":""
+}
+
+每月统计出勤总数
+{
+    "jobName":"StatisticNumOfRoomByMorY_2",
+    "jobGroup":"StatisticsNumAdd",
+    "startTime":"2022-04-24 14:50:00",
+    "endTime":"2024-09-01 01:00:00",
+    "jobClassName":"StatisticNumOfRoomByMorY",
+    "cronExpression":"0 0 23 31 12 ?",
+    "invokeParam":"{'groupId':'1','timeSpan':'Y'}}",
+    "groupId":"1",
+    "closeCronExpression":""
+}
+
+考勤签到
+{
+    "jobName":"",
+    "jobGroup":"",
+    "startTime":"2022-04-24 14:50:00",
+    "endTime":"2024-09-01 01:00:00",
+    "jobClassName":"StartTheCheckInTask",
+    "cronExpression":"0 15 9 * * ?",
+    "invokeParam":"",
+    "groupId":"1",
+    "closeCronExpression":""
+}

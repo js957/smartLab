@@ -71,7 +71,7 @@ public class RecognizableThingsController {
     @PostMapping("saveRecThing")
     public CommonObjReturn addRecThing(@Validated(value = {RecognizableThings.Add.class})@RequestBody RecognizableThings recognizableThings){
         boolean result = recognizableThingsServiceImpl.saveOrUpdate(recognizableThings);
-        WebSocketServer.sendInfo(JSON.toJSONString(recognizableThings),"3");
+        WebSocketServer.sendInfo(JSON.toJSONString(recognizableThingsServiceImpl.list()),"3");
         return new CommonObjReturn(result);
     }
 
@@ -85,7 +85,7 @@ public class RecognizableThingsController {
     @PostMapping("/modifyRecThing")
     public CommonObjReturn modifyRecThing(@Validated(value = {RecognizableThings.Modify.class})@RequestBody RecognizableThings recognizableThings){
         boolean result = recognizableThingsServiceImpl.updateById(recognizableThings);
-        WebSocketServer.sendInfo(JSON.toJSONString(recognizableThings),"3");
+        WebSocketServer.sendInfo(JSON.toJSONString(recognizableThingsServiceImpl.list()),"3");
         return new CommonObjReturn(result);
     }
 
@@ -97,10 +97,8 @@ public class RecognizableThingsController {
      */
     @PostMapping("removeRecThing")
     public CommonObjReturn deleteRecThing(@RequestBody Integer id){
-        RecognizableThings recognizableThings = recognizableThingsServiceImpl.getById(id);
-        recognizableThings.setRecThreshold(1.1);
-        WebSocketServer.sendInfo(JSON.toJSONString(recognizableThings),"3");
         boolean result = recognizableThingsServiceImpl.removeById(id);
+        WebSocketServer.sendInfo(JSON.toJSONString(recognizableThingsServiceImpl.list()),"3");
         return new CommonObjReturn(result);
     }
 

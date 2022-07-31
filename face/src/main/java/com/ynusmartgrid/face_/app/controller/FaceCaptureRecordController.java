@@ -1,21 +1,22 @@
 package com.ynusmartgrid.face_.app.controller;
 
 
+import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.ynusmartgrid.face_.app.entity.BehaviorRecognitionRecord;
-import com.ynusmartgrid.face_.app.entity.Equipment;
-import com.ynusmartgrid.face_.app.entity.Face;
-import com.ynusmartgrid.face_.app.entity.FaceCaptureRecord;
-import com.ynusmartgrid.face_.app.service.IFaceCaptureRecordService;
-import com.ynusmartgrid.face_.app.service.IFaceInterfaceService;
+import com.ynusmartgrid.face_.app.entity.*;
+import com.ynusmartgrid.face_.app.service.*;
 import com.ynusmartgrid.face_.constant.Constant;
+import com.ynusmartgrid.face_.pojo.CheckInInfoByDay;
+import com.ynusmartgrid.face_.pojo.CheckInInfoByTime;
 import com.ynusmartgrid.face_.pojo.CommonObjReturn;
+import com.ynusmartgrid.face_.util.DateUtil;
 import com.ynusmartgrid.face_.util.IoUtil;
+import org.quartz.JobDataMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -50,6 +54,14 @@ public class FaceCaptureRecordController {
     @Autowired
     IFaceInterfaceService faceInterfaceServiceImpl;
 
+    @Autowired
+    IJobRecordService jobRecordServiceImpl;
+
+    @Autowired
+    IFaceGroupBelongService faceGroupBelongServiceImpl;
+
+    @Autowired
+    IMemberGroupService memberGroupServiceImpl;
     /**
      * @Param:
      * @Author: wjs
@@ -220,5 +232,109 @@ public class FaceCaptureRecordController {
         return new CommonObjReturn(faceCaptureRecordServiceImpl.page(page, brrQuery));
     }
 
+    /**
+     * @Param:
+     * @Author: wjs
+     * @date: 21:55
+     * 传入值为，jobId(必填)，startTime,endTime
+     */
+    @PostMapping("/getCheckInMemberByJob")
+    public void getCheckInMemberByJob(@RequestBody HashMap<String, Object> objMap, HttpServletResponse response) throws Exception {
+        if (StrUtil.isBlankIfStr(objMap.get("jobId").toString())) {
+            throw new Exception("jobId不允许为空");
+        }
+        // 判断是否查询多天
+        boolean timeSelect = false;
+        JobRecord jobRecord = jobRecordServiceImpl.getById(objMap.get("jobId").toString());
+        MemberGroup memberGroup = memberGroupServiceImpl.getById(jobRecord.getGroupId());
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        // 默认为当天的数据
+        LocalDateTime startTime = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        if (StrUtil.isNotBlank(objMap.get("startTime").toString()) && StrUtil.isNotBlank(objMap.get("endTime").toString())) {
+            // 若有时间要求则为限定时间
+            startTime = LocalDateTime.of(LocalDate.parse(objMap.get("startTime").toString(), dayFormatter),LocalTime.MIN);
+            endTime = LocalDateTime.of(LocalDate.parse(objMap.get("endTime").toString(), dayFormatter),LocalTime.MAX);
+            // 传入的开始时间比任务定的时间还早，不合理，强行矫正任务开始时间
+            startTime = startTime.compareTo(jobRecord.getStartTime())<0?jobRecord.getStartTime():startTime;
+            // 传入的结束时间比任务结束的时间还晚，不合理，强行矫正为任务结束时间
+            endTime = endTime.compareTo(jobRecord.getEndTime())>0?jobRecord.getEndTime():endTime;
+            timeSelect = true;
 
+        }else if(StrUtil.isNotBlank(objMap.get("startTime").toString())){
+            // 选择某一天获取考勤信息
+            LocalDate date = LocalDate.parse(objMap.get("startTime").toString(), dayFormatter);
+            startTime = LocalDateTime.of(date,LocalTime.MIN);
+            endTime = LocalDateTime.of(date,LocalTime.MAX);
+        }
+        List<Map<String, Object>> resultList = faceCaptureRecordServiceImpl.listMaps(
+                new QueryWrapper<FaceCaptureRecord>()
+                        .select("face_id as faceId", "face_name as faceName", "MIN(gmt_create) as appearTime", "day")
+                        .eq("is_stranger", false) //非陌生人
+                        .inSql("face_id", "select face_id from face_group_belong where group_id=" + jobRecord.getGroupId()) //组内成员
+                        .apply("UNIX_TIMESTAMP(gmt_create) >= UNIX_TIMESTAMP('" + startTime.format(df) + "')")
+                        .apply("UNIX_TIMESTAMP(gmt_create) < UNIX_TIMESTAMP('" + endTime.format(df) + "')") // 当天
+                        .groupBy("face_id", "face_name", "day"));
+        /**
+        *   face_id                         face_name   appearTime      day
+         *0DCD2BBDAFA94FEFA5A4A4323A055519	王耀威	2022-04-23 20:22:42	2022-04-23
+         * E2CA939C3D744A14AC22667D405FA322	杨鹏	2022-04-23 20:23:14	2022-04-23
+         * C1A273F092CA45AEA9A59BA1B73388DB	刘博	2022-04-23 20:23:58	2022-04-23
+         * D023E8B4E8B34DD78B013B521929F239	南峰涛	2022-04-23 20:35:28	2022-04-23
+         * ABDA9FB740C74580996B78193B0765E8	常相超	2022-04-24 16:01:07	2022-04-24
+         * EC405EF22AD24037B17B326A1A3A93CC	王罕文	2022-04-24 16:01:15	2022-04-24
+         * 1EA0AE3F9B3647E781CB8E8B23186158	王佳舜	2022-04-24 16:01:31	2022-04-24
+         * E99ADC5AB0484DD2BFA4C6A510EB4DF4	张炎	2022-04-24 16:03:22	2022-04-24
+         * E2CA939C3D744A14AC22667D405FA322	杨鹏	2022-04-24 16:04:05	2022-04-24
+         * E7592E4FEEFF47FE8BE6EAD9E284771F	汪佩	2022-04-24 16:04:57	2022-04-24
+         * C706CDC6803D4BAAA2DDEAA8691B8213	郭春雪	2022-04-24 16:13:13	2022-04-24
+         * 0DCD2BBDAFA94FEFA5A4A4323A055519	王耀威	2022-04-24 16:14:15	2022-04-24
+         * 170BED5C39294FC3B56B4E7D097C4E32	杨云	2022-04-24 16:15:43	2022-04-24
+         *
+         * 比如查询时间为2022-04-23 时间仅有一天 转换成
+         * faceId                           faceName    appearTime          day         attend    belated
+         * 0DCD2BBDAFA94FEFA5A4A4323A055519| 王耀威|	2022-04-23 20:22:42|	2022-04-23 |1       |0
+         * 5444D358AAC0471098CF28123F1A36F9| 于明浩| null               |   2022-04-23  |0       |1
+         * ...
+         *
+         * 查询时间为2022-04-23 到 2022-24-24 两天(多天) 转换成
+         * faceId                           faceName    day    attend    belated
+         * 0DCD2BBDAFA94FEFA5A4A4323A055519| 王耀威|
+         *                                           2022-04-23  1    0
+         *                                           2022-04-24  1    1
+         * C1A273F092CA45AEA9A59BA1B73388DB| 刘博|   2022-04-23   1    1
+         *                                          2022-04-24   0    1
+         *
+        */
+        List<FaceGroupBelong> fgbList = faceGroupBelongServiceImpl.list(new QueryWrapper<FaceGroupBelong>().eq("group_id",jobRecord.getGroupId()));
+        if(timeSelect){
+            List<String> dayPeriod = CheckInInfoByTime.getRangeDayList(startTime.format(df),endTime.format(df));
+            List<CheckInInfoByTime> checkInInfoByTimes = CheckInInfoByTime.transform2TimeDurationInfo(fgbList, resultList,jobRecord, dayPeriod);
+            faceCaptureRecordServiceImpl.exportExcelByPeriod(response, checkInInfoByTimes, dayPeriod);
+        }else{
+            List<CheckInInfoByDay> checkInInfoByDayList = CheckInInfoByDay.transform2DayInfo(fgbList,resultList,jobRecord);
+            HashMap<String,Object> resultMap = new HashMap<>();
+            resultMap.put("total", checkInInfoByDayList.size());
+            double attend = 0.0;
+            double belated = 0.0;
+            for(CheckInInfoByDay checkInInfoByDay: checkInInfoByDayList){
+                if(checkInInfoByDay.isAttend()){
+                    attend ++;
+                }
+                if(checkInInfoByDay.isBelated()){
+                    belated ++;
+                }
+            }
+            resultMap.put("day", objMap.get("startTime").toString().substring(0,10));
+            resultMap.put("total", fgbList.size());
+            resultMap.put("attend", attend);
+            resultMap.put("belated", belated);
+            resultMap.put("attendance", attend/fgbList.size());
+            resultMap.put("latenessRate", belated/fgbList.size());
+            resultMap.put("groupName",memberGroup.getGroupName());
+            resultMap.put("data",checkInInfoByDayList);
+            faceCaptureRecordServiceImpl.exportExcelByToDay(response, resultMap);
+        }
+    }
 }

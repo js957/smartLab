@@ -48,12 +48,12 @@ public class testStasticRecordGenerate {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         List<Map<String, Object>> resultList = faceCaptureRecordServiceImpl.listMaps(
                 new QueryWrapper<FaceCaptureRecord>()
-                        .select("face_id as faceId", "face_name as faceName", "MIN(gmt_create) as appearTime")
+                        .select("face_id as faceId", "face_name as faceName", "MIN(gmt_create) as appearTime, day")
                         .eq("is_stranger", false) //非陌生人
                         .inSql("face_id", "select face_id from face_group_belong where group_id=" + memberGroup.getGroupId()) //组内成员
                         .apply("UNIX_TIMESTAMP(gmt_create) >= UNIX_TIMESTAMP('" + LocalDateTime.of(LocalDate.of(2022,04,24), LocalTime.MIN).format(df) + "')")
                         .apply("UNIX_TIMESTAMP(gmt_create) < UNIX_TIMESTAMP('" + LocalDateTime.of(2022,04,24,23,59).format(df) + "')") // 当天
-                        .groupBy("face_id", "face_name"));
+                        .groupBy("face_id", "face_name", "day"));
 
         StatisticRecode statisticRecode = new StatisticRecode(memberGroup.getGroupId(), memberGroup.getGroupName(), JSONUtil.toJsonStr(resultList), 4);
         statisticRecode.setGmtCreate(LocalDateTime.of(2022,04,24,23,59));

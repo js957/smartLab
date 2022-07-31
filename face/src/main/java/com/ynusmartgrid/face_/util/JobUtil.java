@@ -42,8 +42,9 @@ public class JobUtil {
         }
         switch (jobRecord.getJobClassName()) {
             case "StartTheCheckInTask":
-                jobDetail = JobBuilder.newJob(StartTheCheckInTask.class).withIdentity(jobRecord.getJobName(), jobRecord.getJobGroup()).build();
-                break;
+                return "StartTheCheckInTask skip";
+//                jobDetail = JobBuilder.newJob(StartTheCheckInTask.class).withIdentity(jobRecord.getJobName(), jobRecord.getJobGroup()).build();
+//                break;
             case "CloseTheCheckInTask":
                 jobDetail = JobBuilder.newJob(CloseTheCheckInTask.class).withIdentity(jobRecord.getJobName(), jobRecord.getJobGroup()).build();
                 break;
@@ -75,6 +76,9 @@ public class JobUtil {
         }
         if(StrUtil.isNotBlank(jobRecord.getGroupId().toString())){
             trigger.getJobDataMap().put("groupId", jobRecord.getGroupId());
+        }
+        if(StrUtil.isNotBlank(jobRecord.getJobId().toString())){
+            trigger.getJobDataMap().put("jobId", jobRecord.getJobId());
         }
         scheduler.scheduleJob(jobDetail, trigger);
         // pauseJob(appQuartz.getJobName(),appQuartz.getJobGroup());

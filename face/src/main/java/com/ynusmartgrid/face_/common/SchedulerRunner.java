@@ -38,6 +38,9 @@ public class SchedulerRunner implements CommandLineRunner {
         jobQuery.apply("UNIX_TIMESTAMP(end_time) > UNIX_TIMESTAMP('" + LocalDateTime.now().format(df) + "')");
         List<JobRecord> jobRecordList = jobRecordMapper.selectList(jobQuery);
         for (JobRecord jobRecord : jobRecordList) {
+            if(jobRecord.getJobClassName().equals("StartTheCheckInTask")){
+                return;
+            }
             String result = jobUtil.addJob(jobRecord, jobRecord.getCronExpression());
             if(StrUtil.isNotBlank(jobRecord.getCloseCronExpression())) {
                 jobRecord.setJobName("Close-" + jobRecord.getJobName());

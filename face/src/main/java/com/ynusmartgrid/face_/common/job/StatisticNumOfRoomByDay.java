@@ -60,6 +60,10 @@ public class StatisticNumOfRoomByDay implements Job {
                 .in("group_id", groupIds)
                 .groupBy("group_id");
         List<Map<String , Object>> maxList = statisticRecodeServiceImpl.listMaps(staQuery);
+        if(maxList.size() < 1){
+            log.error("============每日统计，未能获取到出勤数据============");
+            return;
+        }
         maxCount = maxList.stream().mapToInt(n -> Integer.parseInt(n.get("max").toString())).sum();
         StatisticRecode result = new StatisticRecode(null, Long.parseLong(sumUpGroupId), sumUpGroupName,String.valueOf(maxCount),LocalDateTime.now(),1);
         statisticRecodeServiceImpl.save(result);
