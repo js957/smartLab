@@ -77,7 +77,7 @@ public class StatisticRecodeController {
     *@Param:
     *@Author: wjs
     *@date: 21:59
-     * 获取统计数据
+     * 获取统计数据(最新)
      * groupId,groupName,startTime.endTime,recodeType(同jobId)
     */
     @PostMapping("/getStatisticRecode")
@@ -96,6 +96,35 @@ public class StatisticRecodeController {
         return new CommonObjReturn(statisticRecodeServiceImpl.getOne(staQuery));
     }
 
+    /**
+    *@Param:
+    *@Author: wjs
+    *@date: 21:59
+     * 获取统计数据(时间)
+     * groupId,groupName,startTime.endTime,recodeType(同jobId)
+    */
+    @PostMapping("/getStatisticRecodeList")
+    public CommonObjReturn getStatisticRecodeByList(@RequestBody HashMap<String, Object> objMap){
+        QueryWrapper<StatisticRecode> staQuery = new QueryWrapper<>();
+        staQuery.orderByAsc("gmt_create");
+        if(StrUtil.isNotBlank(objMap.get("groupId").toString())){
+            staQuery.eq("group_id", objMap.get("groupId").toString());
+        }
+        if(StrUtil.isNotBlank(objMap.get("groupName").toString())){
+            staQuery.like("group_name",objMap.get("groupName").toString());
+        }
+        if(StrUtil.isNotBlank(objMap.get("recodeType").toString())){
+            staQuery.eq("recode_type", objMap.get("recodeType").toString());
+        }
+        if (StrUtil.isNotBlank(objMap.get("startTime").toString()) && StrUtil.isNotBlank(objMap.get("endTime").toString())) {
+            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime startTime = LocalDateTime.parse(objMap.get("startTime").toString(), df);
+            LocalDateTime endTime = LocalDateTime.parse(objMap.get("endTime").toString(), df);
+            staQuery.apply("UNIX_TIMESTAMP(gmt_create) >= UNIX_TIMESTAMP('" + startTime.format(df) + "')");
+            staQuery.apply("UNIX_TIMESTAMP(gmt_create) < UNIX_TIMESTAMP('" + endTime.format(df) + "')");
+        }
+        return new CommonObjReturn(statisticRecodeServiceImpl.list(staQuery));
+    }
     /**
     *@Param:
     *@Author: wjs

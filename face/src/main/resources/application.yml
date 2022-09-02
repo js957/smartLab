@@ -41,8 +41,8 @@ spring:
     static-path-pattern: /smartLab/** # 静态文件映射接口
   web:
     resources:
-#      static-locations: file:/home/wangyaowei/smartLabFiles/
-       static-locations: classpath:/smartLabFiles/
+      static-locations: file:/home/wangyaowei/smartLabFiles/
+#       static-locations: classpath:/smartLabFiles/
   servlet:
     multipart:
       # 设置 上传文件的大小

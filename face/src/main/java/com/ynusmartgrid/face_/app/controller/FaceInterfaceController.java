@@ -87,7 +87,10 @@ public class FaceInterfaceController {
                 .append(FileUtil.FILE_SEPARATOR);
         face.setFace(IoUtil.copyToLocal(face.getFace(), parentDirPath.toString()));
         Boolean result = faceInterfaceServiceImpl.saveOrUpdate(face);
-        WebSocketServer.sendInfo(JSON.toJSONString(face), "2");
+        HashMap<String, Object> sentMap = new HashMap<>();
+        sentMap.put("sentFrom","addMember");
+        sentMap.put("data",face);
+        WebSocketServer.sendInfo(JSON.toJSONString(sentMap), "2");
         return new CommonObjReturn(result);
     }
 
@@ -103,6 +106,10 @@ public class FaceInterfaceController {
         if (member == null) {
             return new CommonObjReturn(true, "记录已被删除", Constant.RS_SUCCESS);
         }
+        HashMap<String, Object> sentMap = new HashMap<>();
+        sentMap.put("sentFrom","deleteMember");
+        sentMap.put("data",member);
+        WebSocketServer.sendInfo(JSON.toJSONString(sentMap), "2");
         return new CommonObjReturn(faceInterfaceServiceImpl.removeById(id));
     }
 
@@ -155,7 +162,10 @@ public class FaceInterfaceController {
         List<Face> list = faceInterfaceServiceImpl.list();
         for(Face face: list){
             Thread.sleep(500);
-            WebSocketServer.sendInfo(JSON.toJSONString(face),"2");
+            HashMap<String,Object> sentMap = new HashMap<>();
+            sentMap.put("sentFrom","test");
+            sentMap.put("data",face);
+            WebSocketServer.sendInfo(JSON.toJSONString(sentMap),"2");
         }
     }
 }

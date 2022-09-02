@@ -60,6 +60,9 @@ public class JobUtil {
             case "StatisticAttendanceByDay":
                 jobDetail = JobBuilder.newJob(StatisticAttendanceByDay.class).withIdentity(jobRecord.getJobName(), jobRecord.getJobGroup()).build();
                 break;
+            case "StatisticNumsOfDangerousThingsByDay":
+                jobDetail = JobBuilder.newJob(StatisticNumsOfDangerousThingsByDay.class).withIdentity(jobRecord.getJobName(), jobRecord.getJobGroup()).build();
+                break;
             default:
                 return "Failed to get calling function!";
         }

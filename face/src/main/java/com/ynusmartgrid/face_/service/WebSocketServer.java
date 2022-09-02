@@ -135,6 +135,7 @@ public class WebSocketServer {
         log.info("发送消息到:"+userId+"，报文:"+message);
         if(StrUtil.isNotBlank(userId) && webSocketMap.containsKey(userId)){
             webSocketMap.get(userId).sendMessage(message);
+            System.out.println("sent" + message + "to" + userId);
         }else{
             log.error("用户"+userId+",不在线！");
         }

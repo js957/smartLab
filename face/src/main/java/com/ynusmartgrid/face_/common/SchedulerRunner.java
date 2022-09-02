@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ynusmartgrid.face_.app.entity.JobRecord;
 import com.ynusmartgrid.face_.app.mapper.JobRecordMapper;
+import com.ynusmartgrid.face_.app.service.IJobRecordService;
 import com.ynusmartgrid.face_.app.service.impl.JobRecordServiceImpl;
 import com.ynusmartgrid.face_.util.JobUtil;
 import org.slf4j.Logger;
@@ -29,17 +30,17 @@ public class SchedulerRunner implements CommandLineRunner {
     JobUtil jobUtil;
 
     @Autowired
-    JobRecordMapper jobRecordMapper;
+    IJobRecordService jobRecordServiceImpl;
 
     @Override
     public void run(String... args) throws Exception {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         QueryWrapper<JobRecord> jobQuery = new QueryWrapper<>();
         jobQuery.apply("UNIX_TIMESTAMP(end_time) > UNIX_TIMESTAMP('" + LocalDateTime.now().format(df) + "')");
-        List<JobRecord> jobRecordList = jobRecordMapper.selectList(jobQuery);
+        List<JobRecord> jobRecordList = jobRecordServiceImpl.list(jobQuery);
         for (JobRecord jobRecord : jobRecordList) {
             if(jobRecord.getJobClassName().equals("StartTheCheckInTask")){
-                return;
+                continue;
             }
             String result = jobUtil.addJob(jobRecord, jobRecord.getCronExpression());
             if(StrUtil.isNotBlank(jobRecord.getCloseCronExpression())) {
