@@ -43,6 +43,7 @@ public class JobRecord implements Serializable {
      * 任务主键
      */
     @TableId(type = IdType.AUTO)
+    @NotNull(message = "修改的任务ID不允许为空",groups = JobRecord.Modify.class)
     private Long jobId;
 
     /**

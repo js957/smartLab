@@ -175,11 +175,14 @@ public class JobRecordController {
     */
     @PostMapping(value = "/updateJob")
     public CommonObjReturn modifyJob(@RequestBody JobRecord jobRecord) throws Exception {
+        JobRecord oldJobRecord = jobRecordService.getById(jobRecord.getJobId());
+        jobRecord.setJobName(oldJobRecord.getJobName());
+        jobRecord.setJobGroup(oldJobRecord.getJobGroup());
         String ret = jobUtil.modifyJob(jobRecord);
         if ("success".equals(ret)) {
             jobRecordService.updateById(jobRecord);
             LOGGER.info(String.format("任务：%s.%s 被修改",jobRecord.getJobGroup(), jobRecord.getJobName()));
-            return new CommonObjReturn("success updateJob", ret);
+            return new CommonObjReturn(true,"success updateJob", ret);
         } else {
             return new CommonObjReturn(ret, Constant.RS_SYSTEM_ERROR);
         }

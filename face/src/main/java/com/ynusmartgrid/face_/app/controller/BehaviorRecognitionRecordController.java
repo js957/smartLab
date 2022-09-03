@@ -94,7 +94,7 @@ public class BehaviorRecognitionRecordController {
         // 存储图片并修改识别记录的图片地址为映射地址
         StringBuffer parentDirPath = new StringBuffer();
         parentDirPath.append(Constant.SMART_LAB_LOCAL_FILE_DIR)
-                .append("BehaviorRecognitionRecord")
+                .append("behaviorRecodeFiles")
                 .append(FileUtil.FILE_SEPARATOR)
                 .append(behaviorRecognitionRecord.getDescription())
                 .append(FileUtil.FILE_SEPARATOR);

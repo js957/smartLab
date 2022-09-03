@@ -154,6 +154,7 @@ public class JobUtil {
 
     //修改任务
     public String modifyJob(JobRecord jobRecord) throws SchedulerException {
+
         if (!CronExpression.isValidExpression(jobRecord.getCronExpression())) {
             return "Illegal cron expression";
         }

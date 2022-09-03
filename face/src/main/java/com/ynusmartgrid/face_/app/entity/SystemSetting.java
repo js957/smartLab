@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * <p>
  * 
@@ -40,11 +42,13 @@ public class SystemSetting implements Serializable {
     /**
      * 名称
      */
+    @NotNull(message = "设置名不允许为空",groups = SystemSetting.Add.class)
     private String name;
 
     /**
      * 值
      */
+    @NotNull(message = "参数不允许为空",groups = SystemSetting.Add.class)
     private String value;
 
     /**
