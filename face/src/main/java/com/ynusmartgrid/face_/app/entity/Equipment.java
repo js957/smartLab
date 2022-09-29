@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
@@ -26,7 +25,6 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@NoArgsConstructor
 public class Equipment implements Serializable {
 
 
@@ -110,5 +108,10 @@ public class Equipment implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private LocalDateTime gmtModified;
 
-
+    public Equipment() {
+        //默认当前时间
+        if(this.gmtCreate == null){
+            gmtCreate=LocalDateTime.now();
+        }
+    }
 }

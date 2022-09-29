@@ -27,7 +27,6 @@ import javax.validation.constraints.NotNull;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
-@NoArgsConstructor
 public class JobRecord implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -112,6 +111,11 @@ public class JobRecord implements Serializable {
     @TableLogic
     private Boolean deleted;
 
-
+    public JobRecord() {
+        //默认当前时间
+        if (this.createTime == null) {
+            createTime = LocalDateTime.now();
+        }
+    }
 
 }

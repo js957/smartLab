@@ -6,7 +6,6 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -19,7 +18,6 @@ import org.springframework.format.annotation.DateTimeFormat;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@NoArgsConstructor
 public class PersonNumOfRoom implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,5 +49,10 @@ public class PersonNumOfRoom implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private LocalDateTime gmtCreate;
 
+    PersonNumOfRoom(){
+        if(gmtCreate == null){
+            this.gmtCreate = LocalDateTime.now();
+        }
+    }
 
 }

@@ -152,7 +152,7 @@ public class FaceCaptureRecordController {
                 .append(facePath)
                 .append(FileUtil.FILE_SEPARATOR);
         faceCaptureRecord.setFace(IoUtil.copyToLocal(faceCaptureRecord.getFace(), parentDirPath.toString()));
-        log.info("杨鹏面部识别检测提交参数"+ faceCaptureRecord);
+        // log.info("杨鹏面部识别检测提交参数"+ faceCaptureRecord);
         return new CommonObjReturn(faceCaptureRecordServiceImpl.saveOrUpdate(faceCaptureRecord));
     }
 
