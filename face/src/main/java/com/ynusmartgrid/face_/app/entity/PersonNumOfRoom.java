@@ -6,6 +6,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -18,6 +19,7 @@ import org.springframework.format.annotation.DateTimeFormat;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
 public class PersonNumOfRoom implements Serializable {
 
     private static final long serialVersionUID = 1L;

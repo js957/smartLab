@@ -23,7 +23,7 @@ services:
     ports:
       - "8081:8899"
     volumes:
-      - ../smartLabFiles/:/usr/smartLabFiles/
+      - ../smartLabFiles/:/usr/local/docker/smartLab/smartLabFiles/
     depends_on:
       - mysql
     restart: always

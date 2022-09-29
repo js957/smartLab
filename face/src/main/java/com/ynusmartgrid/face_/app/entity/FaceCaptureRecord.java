@@ -129,9 +129,6 @@ public class FaceCaptureRecord implements Serializable {
 
     public FaceCaptureRecord() {
         //默认当前时间
-        if(this.gmtCreate == null){
-            this.gmtCreate=LocalDateTime.now();
-        }
         if(this.day == null){
             this.day = new Date(new java.util.Date().getTime());
         }

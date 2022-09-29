@@ -16,6 +16,7 @@ import com.ynusmartgrid.face_.pojo.CheckInInfoByTime;
 import com.ynusmartgrid.face_.pojo.CommonObjReturn;
 import com.ynusmartgrid.face_.util.DateUtil;
 import com.ynusmartgrid.face_.util.IoUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobDataMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -44,6 +45,7 @@ import java.util.stream.Collectors;
  * @author wjs
  * @since 2022-03-03
  */
+@Slf4j
 @RestController
 @RequestMapping("/app/faceCaptureRecord")
 public class FaceCaptureRecordController {
@@ -123,6 +125,7 @@ public class FaceCaptureRecordController {
      */
     @PostMapping("/saveFaceCaptureRecord")
     public CommonObjReturn addFaceCaptureRecord(@Validated(value = {FaceCaptureRecord.Add.class}) @RequestBody FaceCaptureRecord faceCaptureRecord) {
+
         // 如果是陌生人直接存
         String facePath;
         if (faceCaptureRecord.getIsStranger()) {
@@ -149,6 +152,7 @@ public class FaceCaptureRecordController {
                 .append(facePath)
                 .append(FileUtil.FILE_SEPARATOR);
         faceCaptureRecord.setFace(IoUtil.copyToLocal(faceCaptureRecord.getFace(), parentDirPath.toString()));
+        log.info("杨鹏面部识别检测提交参数"+ faceCaptureRecord);
         return new CommonObjReturn(faceCaptureRecordServiceImpl.saveOrUpdate(faceCaptureRecord));
     }
 

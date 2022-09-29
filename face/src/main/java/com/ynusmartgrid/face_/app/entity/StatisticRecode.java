@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -22,6 +23,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
+@NoArgsConstructor
 public class StatisticRecode implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -56,12 +58,6 @@ public class StatisticRecode implements Serializable {
     private Integer recodeType;
 
 
-    public StatisticRecode() {
-        //默认当前时间
-        if(this.gmtCreate == null){
-            gmtCreate=LocalDateTime.now();
-        }
-    }
 
     public StatisticRecode(Long groupId, String groupName, String statisticInfoRecode, LocalDateTime gmtCreate, Integer recodeType) {
         this.groupId = groupId;
@@ -76,7 +72,6 @@ public class StatisticRecode implements Serializable {
         this.groupName = groupName;
         this.statisticInfoRecode = statisticInfoRecode;
         this.recodeType = recodeType;
-        this.gmtCreate = LocalDateTime.now();
     }
 
 }

@@ -14,6 +14,7 @@ import com.ynusmartgrid.face_.constant.Constant;
 import com.ynusmartgrid.face_.pojo.CommonObjReturn;
 import com.ynusmartgrid.face_.service.WebSocketServer;
 import com.ynusmartgrid.face_.util.IoUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ import java.util.List;
  * @since 2022-03-03
  */
 
+@Slf4j
 @RestController
 @RequestMapping("/app/behaviorRecognitionRecord")
 public class BehaviorRecognitionRecordController {
@@ -91,6 +93,7 @@ public class BehaviorRecognitionRecordController {
      */
     @PostMapping("/saveBehaviorRecognitionRecord")
     public CommonObjReturn addBehaviorRecognitionRecord(@Validated(value = {BehaviorRecognitionRecord.Add.class}) @RequestBody BehaviorRecognitionRecord behaviorRecognitionRecord) {
+        log.info("罕文--异常行为检测提交参数：" + behaviorRecognitionRecord.toString());
         // 存储图片并修改识别记录的图片地址为映射地址
         StringBuffer parentDirPath = new StringBuffer();
         parentDirPath.append(Constant.SMART_LAB_LOCAL_FILE_DIR)
@@ -129,6 +132,7 @@ public class BehaviorRecognitionRecordController {
      */
     @PostMapping("/uploadNumberOfRooms")
     public CommonObjReturn uploadNumberOfRooms(@RequestBody List<StatisticRecode> numberOfRoomList) {
+        log.info("罕文--房间人数检测提交参数：" + numberOfRoomList.toString());
         // 保存一个最大人数的列表
         MaxNumBerOfRoomList.setNumBerOfRoomList(numberOfRoomList);
         WebSocketServer.sendInfo(JSON.toJSONString(numberOfRoomList), "1");
