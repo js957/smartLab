@@ -6,6 +6,7 @@ import cn.hutool.http.HttpUtil;//需要导入的包
 import com.ynusmartgrid.face_.app.entity.BehaviorRecognitionRecord;
 import com.ynusmartgrid.face_.app.entity.FaceCaptureRecord;
 import com.ynusmartgrid.face_.constant.Constant;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -14,6 +15,7 @@ import java.nio.file.Paths;
 /**
  * Created by wjs on 2021/09/26
  */
+@Slf4j
 public class IoUtil {
 
     /**
@@ -57,8 +59,11 @@ public class IoUtil {
             parentDirPath += picture.getName();
             File parentDir = FileUtil.mkParentDirs(parentDirPath.toString());
             File result = FileUtil.copy(picture,parentDir,false);
-            return parentDirPath.toString().replaceFirst(Constant.SMART_LAB_LOCAL_FILE_DIR,Constant.SMART_LAB_LOCAL_STATIC_DIR);
+            String returnName = parentDirPath.toString().replaceFirst(Constant.SMART_LAB_LOCAL_FILE_DIR,Constant.SMART_LAB_LOCAL_STATIC_DIR);
+            log.info("文件已上传，映射地址为"+ returnName);
+            return returnName;
         }
+        log.error("文件名："+originalFilePath + ";文件状态："+ picture.exists());
         return "";
     }
 

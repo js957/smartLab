@@ -41,7 +41,7 @@ spring:
     static-path-pattern: /smartLab/** # 静态文件映射接口
   web:
     resources:
-      static-locations: file:/home/wangyaowei/smartLabFiles/
+      static-locations: file:/usr/local/docker/smartLab/smartLabFiles/
 #       static-locations: classpath:/smartLabFiles/
   servlet:
     multipart:
@@ -49,6 +49,9 @@ spring:
       max-file-size: 10MB
       # 设置 整个请求的大小
       max-request-size: 15MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
 mybatis-plus:
   global-config:
     db-config:

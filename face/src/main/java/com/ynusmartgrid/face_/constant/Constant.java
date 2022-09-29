@@ -78,7 +78,7 @@ public class Constant {
     /**
     * 智慧实验室文件目录
     */
-    public static final String SMART_LAB_LOCAL_FILE_DIR = "/home/wangyaowei/smartLabFiles/";
+    public static final String SMART_LAB_LOCAL_FILE_DIR = "/usr/local/docker/smartLab/smartLabFiles/";
     // public static final String SMART_LAB_LOCAL_FILE_DIR = "D:/LibProject/smartLabFiles/";
     /**
     * 后端映射地址

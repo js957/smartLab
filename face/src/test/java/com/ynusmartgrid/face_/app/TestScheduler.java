@@ -24,20 +24,21 @@ public class TestScheduler {
 
     @Test
     public void startTask() throws Exception {
-        JobRecord jobRecord = new JobRecord();
-        jobRecord.setJobClassName("StartTheCheckInTask");
-        jobRecord.setJobId(1L);
-        jobRecord.setCreateTime(LocalDateTime.now());
-        jobRecord.setJobName("checkIn1");
-        jobRecord.setJobGroup("checkInGroup");
-        jobRecord.setStartTime(LocalDateTime.now());
-        jobRecord.setEndTime(LocalDateTime.now().plusMinutes(2L));
-        jobRecord.setCronExpression("*/10 * * * * ?");
-        jobRecord.setCloseCronExpression("*/15 * * * * ?");
-        jobRecord.setInvokeParam("{data:{data1:3}}");
-        jobUtil.addJob(jobRecord, jobRecord.getCronExpression());
-        jobRecord.setJobGroup("closeCheckInGroup");
-        jobUtil.addJob(jobRecord, jobRecord.getCloseCronExpression());
+//        JobRecord jobRecord = new JobRecord();
+//        jobRecord.setJobClassName("StartTheCheckInTask");
+//        jobRecord.setJobId(1L);
+//        jobRecord.setCreateTime(LocalDateTime.now());
+//        jobRecord.setJobName("checkIn1");
+//        jobRecord.setJobGroup("checkInGroup");
+//        jobRecord.setStartTime(LocalDateTime.now());
+//        jobRecord.setEndTime(LocalDateTime.now().plusMinutes(2L));
+//        jobRecord.setCronExpression("*/10 * * * * ?");
+//        jobRecord.setCloseCronExpression("*/15 * * * * ?");
+//        jobRecord.setInvokeParam("{data:{data1:3}}");
+//        jobUtil.addJob(jobRecord, jobRecord.getCronExpression());
+//        jobRecord.setJobGroup("closeCheckInGroup");
+//        jobUtil.addJob(jobRecord, jobRecord.getCloseCronExpression());
+        System.out.println(LocalDateTime.now());
 
     }
 }

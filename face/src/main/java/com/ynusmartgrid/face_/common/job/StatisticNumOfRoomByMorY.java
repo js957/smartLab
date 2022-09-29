@@ -2,6 +2,7 @@ package com.ynusmartgrid.face_.common.job;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ynusmartgrid.face_.app.entity.StatisticRecode;
 import com.ynusmartgrid.face_.app.service.IMemberGroupService;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by wjs on 2022/05/11
@@ -40,7 +43,7 @@ public class StatisticNumOfRoomByMorY implements Job{
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
         // 获取必要参数
-        HashMap<String,Object> dataMap = JSON.parseObject(JSON.toJSONString(jobDataMap.getString("invokeParam")),HashMap.class);
+        JSONObject dataMap = (JSONObject) JSON.parse(jobDataMap.getString("invokeParam"));
         String groupId = dataMap.get("groupId").toString();
         String groupName = memberGroupServiceImpl.getById(groupId).getGroupName();
         if(StrUtil.isBlankIfStr(groupName)){
@@ -49,8 +52,8 @@ public class StatisticNumOfRoomByMorY implements Job{
         }
         char timeSpan = dataMap.get("timeSpan").toString().charAt(0);
         int recodeType = 2;
-        LocalDateTime endDate = LocalDateTime.now();
-        LocalDateTime startDate = endDate.minusDays(1L);
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime endDate = startDate.plusDays(1L);
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         QueryWrapper<StatisticRecode> staQuery = new QueryWrapper<>();
         switch (timeSpan) {
@@ -73,12 +76,13 @@ public class StatisticNumOfRoomByMorY implements Job{
                 .apply("UNIX_TIMESTAMP(gmt_create) >= UNIX_TIMESTAMP('" + startDate.format(df) + "')")
                 .apply("UNIX_TIMESTAMP(gmt_create) < UNIX_TIMESTAMP('" + endDate.format(df) + "')")
                 .groupBy("recode_type");
-        int count = statisticRecodeServiceImpl.count(staQuery);
+        List<Map<String,Object>> objects = statisticRecodeServiceImpl.listMaps(staQuery);
+        Double count = (Double) objects.get(0).get("statistic_info_recode");
         if(count<1){
             log.error("============定时任务获未能取到统计数据============");
             return;
         }
-        StatisticRecode result = new StatisticRecode(null,Long.parseLong(groupId),groupName,String.valueOf(count),endDate,recodeType);
+        StatisticRecode result = new StatisticRecode(null,Long.parseLong(groupId),groupName,String.valueOf(count.intValue()),endDate,recodeType);
         statisticRecodeServiceImpl.save(result);
         log.info(String.format("============插入时间跨度%c的数据============", timeSpan));
         log.info(String.format("存储数据为：%s", result.toString()));

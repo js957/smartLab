@@ -35,8 +35,8 @@ public class StatisticAttendanceByDay implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime endTime = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MIN);
-        LocalDateTime startTime = endTime.minusDays(1L);
+        LocalDateTime startTime = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MIN);
+        LocalDateTime endTime = startTime.plusDays(1L);
         QueryWrapper<FaceCaptureRecord> fcrQuery = new QueryWrapper<>();
         fcrQuery.select("face_id")
                 .eq("is_stranger",0)
@@ -44,6 +44,10 @@ public class StatisticAttendanceByDay implements Job {
                 .apply("UNIX_TIMESTAMP(gmt_create) < UNIX_TIMESTAMP('" + endTime.format(df) + "')")
                 .groupBy("face_id");
         List<String> faceIds = faceCaptureRecordServiceImpl.list(fcrQuery).stream().map(n->n.getFaceId()).collect(Collectors.toList());
+        if(faceIds.size() < 1){
+            log.info("============异常！无人出勤。============");
+            return;
+        }
         UpdateWrapper<Face> faceUpdate = new UpdateWrapper<>();
         faceUpdate.setSql("attendance = attendance + 1")
                 .in("system_identity", faceIds);

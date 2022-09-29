@@ -6,6 +6,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * <p>
@@ -44,7 +45,8 @@ public class PersonNumOfRoom implements Serializable {
     /**
      * 记录时间
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private LocalDateTime gmtCreate;
 
 

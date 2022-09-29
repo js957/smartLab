@@ -1,6 +1,7 @@
 package com.ynusmartgrid.face_.util;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSON;
 import com.ynusmartgrid.face_.app.entity.JobRecord;
 import com.ynusmartgrid.face_.common.job.*;
 import org.quartz.*;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by wjs on 2022/04/16
@@ -75,13 +77,13 @@ public class JobUtil {
 
         //传递参数
         if (StrUtil.isNotBlank(jobRecord.getInvokeParam())) {
-            trigger.getJobDataMap().put("invokeParam", jobRecord.getInvokeParam());
+            jobDetail.getJobDataMap().put("invokeParam", jobRecord.getInvokeParam());
         }
         if(StrUtil.isNotBlank(jobRecord.getGroupId().toString())){
-            trigger.getJobDataMap().put("groupId", jobRecord.getGroupId());
+            jobDetail.getJobDataMap().put("groupId", jobRecord.getGroupId());
         }
         if(StrUtil.isNotBlank(jobRecord.getJobId().toString())){
-            trigger.getJobDataMap().put("jobId", jobRecord.getJobId());
+            jobDetail.getJobDataMap().put("jobId", jobRecord.getJobId());
         }
         scheduler.scheduleJob(jobDetail, trigger);
         // pauseJob(appQuartz.getJobName(),appQuartz.getJobGroup());

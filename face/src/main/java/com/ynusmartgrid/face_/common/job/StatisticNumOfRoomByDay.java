@@ -3,6 +3,7 @@ package com.ynusmartgrid.face_.common.job;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.druid.sql.visitor.functions.Char;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ynusmartgrid.face_.app.entity.StatisticRecode;
 import com.ynusmartgrid.face_.app.service.IMemberGroupService;
@@ -43,7 +44,7 @@ public class StatisticNumOfRoomByDay implements Job {
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
         // 获取必要参数
-        HashMap<String, Object> dataMap = JSON.parseObject(JSON.toJSONString(jobDataMap.getString("invokeParam")), HashMap.class);
+        JSONObject dataMap = (JSONObject) JSON.parse(jobDataMap.getString("invokeParam"));
         String[] groupIds = dataMap.get("groupIds").toString().split(",");
         String sumUpGroupId = dataMap.get("sumUpGroupId").toString();
         String sumUpGroupName = memberGroupServiceImpl.getById(sumUpGroupId).getGroupName();
@@ -52,8 +53,8 @@ public class StatisticNumOfRoomByDay implements Job {
             return;
         }
         int maxCount;
-        LocalDateTime endTime = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MIN);
-        LocalDateTime startTime = endTime.minusDays(1L);
+        LocalDateTime startTime = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MIN);
+        LocalDateTime endTime = startTime.plusDays(1L);
         QueryWrapper<StatisticRecode> staQuery = new QueryWrapper<>();
         staQuery.select("MAX(statistic_info_recode) as max")
                 .eq("recode_type", 0)

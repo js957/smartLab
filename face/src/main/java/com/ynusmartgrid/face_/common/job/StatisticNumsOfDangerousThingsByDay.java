@@ -47,8 +47,8 @@ public class StatisticNumsOfDangerousThingsByDay implements Job {
         Long jobId = jobDataMap.getLong("jobId");
         String groupName = memberGroupServiceImpl.getById(groupId).getGroupName();
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime endTime = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MIN);
-        LocalDateTime startTime = endTime.minusDays(1L);
+        LocalDateTime startTime = LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.MIN);
+        LocalDateTime endTime = startTime.plusDays(1L);
         QueryWrapper<BehaviorRecognitionRecord> brrQuery = new QueryWrapper<>();
         brrQuery.in("type", Stream.of(0,1,2,3).collect(Collectors.toList()))
                 .apply("UNIX_TIMESTAMP(gmt_create) >= UNIX_TIMESTAMP('" + startTime.format(df) + "')")
