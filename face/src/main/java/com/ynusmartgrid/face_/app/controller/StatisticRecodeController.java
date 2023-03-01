@@ -93,6 +93,7 @@ public class StatisticRecodeController {
         if(StrUtil.isNotBlank(objMap.get("recodeType").toString())){
             staQuery.eq("recode_type", objMap.get("recodeType").toString());
         }
+        staQuery.last("limit 1");
         return new CommonObjReturn(statisticRecodeServiceImpl.getOne(staQuery));
     }
 
